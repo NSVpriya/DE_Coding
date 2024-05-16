@@ -1,0 +1,96 @@
+1.
+select A.deparment,A.cnt 
+from
+   ( select department,count(*)as cnt 
+    from 
+    Employee 
+    group by department )
+    as A 
+order by A.cnt desc;
+
+2. 
+select B.DepartmentName ,max(A.Unitprice) as MostExpensiveProductPrice,
+from Product A
+inner join department B 
+on A.SepartmentID=B.ID 
+group by B.DepartmentName ;
+
+3. a)
+from pyspark.sql import SparkSession
+from pyspark.sql.types import *
+from pyspark.sql.functions import *
+#Create a SparkSession
+spark = SparkSession.builder \
+    .appName("Reading abd Average the transaction amount from the CSV file") \
+    .getOrCreate()
+
+#Read the CSV data into a DataFrame using the defined schema
+df=spark.read.csv.path("path_of_file",header=True) 
+df.show()  
+
+b)
+# Calculate the average transaction amount
+average_transaction_amount = df.select(avg(df['TransactionAmount']).alias('AverageTransactionAmount')).collect()[0][0]
+print("Average transaction amount:", average_transaction_amount)
+#Stop the SparkSession
+spark.stop()
+
+4. #Approach1:
+def square_function(lst): #Function to get the square of elements
+    new_list = []
+    new_list=[ele*ele for ele in lst] #list_comprehension
+    return new_list
+
+lst = [1, 2, 3, 4] #Given input
+print(square_function(lst)) #calling function
+
+#Approach2: 
+def square_function(lst): #Function to get the square of elements
+    return list(map(lambda ele: ele * ele, lst))
+
+lst = [1, 2, 3, 4] #Given input
+print(square_function(lst)) #calling function
+
+5. 
+def is_duplicate(nums): #Function to check if array has duplicates
+    nums_set = set() #declaring a set
+    for ele in nums: #iterating through given array
+        if ele in nums_set:
+            return True
+        else:
+            nums_set.add(ele) #if ele is not present in nums_set add the element to nums_set
+    return False
+
+nums=input("enter the array elements") #give the desired input
+print(is_duplicate(nums))
+
+6. 
+Let's design the data pipeline from the start using AWS services in the following steps:
+
+1. Data Extraction:
+   >Source data is stored in a legacy database in CSV format.
+   > We'll use AWS Glue for data extraction. Glue supports various data sources, including CSV files, and provides managed ETL capabilities. We can create Glue crawlers to discover the schema of the CSV files and create tables of metadata in the Data Catalog.
+
+2. Data Transformation:
+   >After extraction, the data may needs to be verified and cleaned.
+   > We can utilize Glue for this data transformation. Glue will  supports Python and Scala for writing ETL scripts.
+   > Transformation logic will be implemented in Glue ETL scripts this will included any filtration of unwanted records, combination of different payloads and applying necessary data transformations.
+
+3. Data Loading:
+   > The transformed data from the above step will be loaded into cloud database which is redshift for the analytics purpose
+   > Glue or AWS Data Pipeline can be used to build the data loading process. This can help with automation and scheduling for ETL pipeline for loading data into the required database.
+
+4. Batch Processing:
+   > Amazon S3 can be used to stored both raw source data and transformed output data.
+   > The data will be stored in partitions in S3 by export date for efficient storage and       easy retrieval.
+   > Data extraction from the source system will occur overnight each night as part of a batch process.
+   > We can use AWS Lambda with along CloudWatch service for scheduling the overnight batch process. Lambda functions triggered by CloudWatch Events will initiate the data extraction, transformation, and loading tasks at the specified time each night.
+
+5. Monitoring and Logging:
+   > We can use AWS CloudWatch for monitoring the health, performance, and logs of the pipeline components.
+
+6.Security:
+   > For more secure data extractions and transformation and to prevent loss of any confidential data we will encryption of data at rest and in transit, access control using AWS IAM roles and policies, and regular backups to ensure data integrity and security.
+
+By following this design, we can implement a scalable, efficient, and reliable ETL/ELT data pipeline on AWS to meet the business requirements.
+
