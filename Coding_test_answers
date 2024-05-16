@@ -21,7 +21,7 @@ from pyspark.sql.types import *
 from pyspark.sql.functions import *
 #Create a SparkSession
 spark = SparkSession.builder \
-    .appName("Reading abd Average the transaction amount from the CSV file") \
+    .appName("Reading and calculating the Average the transaction amount from the CSV file") \
     .getOrCreate()
 
 #Read the CSV data into a DataFrame using the defined schema
